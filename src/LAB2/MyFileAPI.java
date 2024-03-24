@@ -1,24 +1,43 @@
-package LAB2;
 import java.io.*;
 
-public class MyFileAPI extends File {
-	
-	MyFileAPI (String filename)
-	{
-		super(filename);
-	}
+class MyReader extends FileReader {
+    File file;
+    char[] content = new char[1000];
 
-	public static void main (String [] args ) throws Exception
-	{
-		MyFileAPI myfile = new MyFileAPI ("My.txt");
-		
-		if(myfile.exists())
-		{
-			System.out.println("File Exists!");
-		}
-		else
-		{
-			System.out.println("File does not exist! Try another file name");
-		}
-	}
+    MyReader(File file) throws Exception {
+        super(file);
+        this.file = file;
+    }
+
+    MyReader(String filename) throws Exception {
+        super(filename);
+        file = new File(filename);
+    }
+
+    public String readContent() throws Exception {
+        StringBuilder stringBuilder = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                stringBuilder.append(line);
+                stringBuilder.append("\n");
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    public static void main(String[] args) throws Exception {
+        try (FileWriter fw = new FileWriter("Welcome.txt")) {
+            fw.write("Welcome to Software Engineering Department");
+        } catch (IOException e) {
+            System.out.println("An error occurred while creating the file: " + e.getMessage());
+        }
+
+        MyReader reader = new MyReader("Welcome.txt");
+        System.out.println(reader.readContent());
+
+        File file = new File("Welcome.txt");
+        MyReader reader2 = new MyReader(file);
+        System.out.println(reader2.readContent());
+    }
 }
